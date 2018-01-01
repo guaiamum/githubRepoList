@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 
 import {
   Container,
@@ -23,35 +24,44 @@ export default class App extends Component {
   }
 
   async componentDidMount(){
-    const baseURL = 'https://api.github.com';
-    const options = {
-      header : {
-        'User-Agent': 'githubRepoList',
-      },
-    };
+    const isOnline = false;
 
-    // console.log(options);
+    if(isOnline) {
+      const baseURL = 'https://api.github.com';
+      const options = {
+        header : {
+          'User-Agent': 'githubRepoList',
+        },
+      };
 
-    const reposResponse = await fetch(`${baseURL}/orgs/rocketseat/repos`,options);
-    const userResponse = await fetch(`${baseURL}/orgs/rocketseat/members`,options);
+      const reposResponse = await fetch(`${baseURL}/orgs/rocketseat/repos`, options);
+      const userResponse = await fetch(`${baseURL}/orgs/rocketseat/members`, options);
 
-    // console.log(reposResponse);
-
-    this.setState({
-      repos: [{id: 123, name: "oi", html_url: "lalala.com"},{id: 321, name: "tchau", html_url: "oioioi.com"}],
-      // users: await userResponse.json(),
-    })
-    // this.setState({
-    //   repos: await reposResponse.json(),
-    //   users: await userResponse.json(),
-    // })
+      this.setState({
+        repos: await reposResponse.json(),
+        users: await userResponse.json(),
+      })
+    }
+    else {
+      // console.warn("Applicaion Offline, loading demo");
+      this.setState({
+        repos: [
+          {id: 123, name: "oi", html_url: "lalala.com"},
+          {id: 321, name: "tchau", html_url: "oioioi.com"}
+        ],
+         users: [
+           {id: 123, login: "usuário1", html_url: "lalala.com",avatar_url: "/src/img/face.jpg"},
+           {id: 321, login: "usuário2", html_url: "oioioi.com",avatar_url: "/src/img/face.jpg"}
+         ],
+      });
+    }
   }
 
   render() {
     return (
       <Container>
 
-        <Header hasTabs>
+        <Header hasTabs style={styles.container}>
           <Body>
             <Title>Github</Title>
           </Body>
@@ -61,31 +71,31 @@ export default class App extends Component {
           <Tab heading="Repositórios">
             <Content>
               <List>
-                { this.state.repos.map(repo => {
+                { this.state.repos.map(repo => (
                   <ListItem key={repo.id}>
                     <Body>
                       <Text>{repo.name}</Text>
                       <Text note>{repo.html_url}</Text>
                     </Body>
                   </ListItem>
-                })}
+                ))}
               </List>
             </Content>
           </Tab>
           <Tab heading="Usuários">
             <Content>
               <List>
-                {this.state.users.map(user => {
+                {this.state.users.map(user => (
                   <ListItem avatar key={user.id}>
                     <Left>
-                      <Thumbnail small source= {{uri:'user.avatar_url'}}/>
+                      <Thumbnail small source= {{uri:user.avatar_url}}/>
                     </Left>
                     <Body>
                       <Text>{user.login}</Text>
                       <Text note>{user.html_url}</Text>
                     </Body>
                   </ListItem>
-                })}
+                ))}
               </List>
             </Content>
           </Tab>
@@ -93,4 +103,11 @@ export default class App extends Component {
       </Container>
     );
   }
+
 }
+
+const styles = StyleSheet.create({
+  container: {
+    // backgroundColor: '#61089f'
+  },
+});
