@@ -7,77 +7,90 @@ import {
   Tabs,
   Tab,
   Title,
+  Body,
   List,
   ListItem,
-  Text
+  Text,
+  Left,
+  Right,
+  Thumbnail
 } from 'native-base';
 
 export default class App extends Component {
+  state = {
+    repos: [],
+    users: [],
+  }
+
+  async componentDidMount(){
+    const baseURL = 'https://api.github.com';
+    const options = {
+      header : {
+        'User-Agent': 'githubRepoList',
+      },
+    };
+
+    // console.log(options);
+
+    const reposResponse = await fetch(`${baseURL}/orgs/rocketseat/repos`,options);
+    const userResponse = await fetch(`${baseURL}/orgs/rocketseat/members`,options);
+
+    // console.log(reposResponse);
+
+    this.setState({
+      repos: [{id: 123, name: "oi", html_url: "lalala.com"},{id: 321, name: "tchau", html_url: "oioioi.com"}],
+      // users: await userResponse.json(),
+    })
+    // this.setState({
+    //   repos: await reposResponse.json(),
+    //   users: await userResponse.json(),
+    // })
+  }
+
   render() {
     return (
       <Container>
-        <Header>
-          <Title>Github</Title>
+
+        <Header hasTabs>
+          <Body>
+            <Title>Github</Title>
+          </Body>
         </Header>
+
+        <Tabs>
+          <Tab heading="Repositórios">
+            <Content>
+              <List>
+                { this.state.repos.map(repo => {
+                  <ListItem key={repo.id}>
+                    <Body>
+                      <Text>{repo.name}</Text>
+                      <Text note>{repo.html_url}</Text>
+                    </Body>
+                  </ListItem>
+                })}
+              </List>
+            </Content>
+          </Tab>
+          <Tab heading="Usuários">
+            <Content>
+              <List>
+                {this.state.users.map(user => {
+                  <ListItem avatar key={user.id}>
+                    <Left>
+                      <Thumbnail small source= {{uri:'user.avatar_url'}}/>
+                    </Left>
+                    <Body>
+                      <Text>{user.login}</Text>
+                      <Text note>{user.html_url}</Text>
+                    </Body>
+                  </ListItem>
+                })}
+              </List>
+            </Content>
+          </Tab>
+        </Tabs>
       </Container>
     );
   }
 }
-
-// /**
-//  * Sample React Native App
-//  * https://github.com/facebook/react-native
-//  * @flow
-//  */
-//
-// import React, { Component } from 'react';
-// import {
-//   Platform,
-//   StyleSheet,
-//   Text,
-//   View
-// } from 'react-native';
-//
-// const instructions = Platform.select({
-//   ios: 'Press Cmd+R to reload,\n' +
-//     'Cmd+D or shake for dev menu',
-//   android: 'Double tap R on your keyboard to reload,\n' +
-//     'Shake or press menu button for dev menu',
-// });
-//
-// export default class App extends Component<{}> {
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.welcome}>
-//           Welcome to React Native!
-//         </Text>
-//         <Text style={styles.instructions}>
-//           To get started, edit App.js
-//         </Text>
-//         <Text style={styles.instructions}>
-//           {instructions}
-//         </Text>
-//       </View>
-//     );
-//   }
-// }
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#F5FCFF',
-//   },
-//   welcome: {
-//     fontSize: 20,
-//     textAlign: 'center',
-//     margin: 10,
-//   },
-//   instructions: {
-//     textAlign: 'center',
-//     color: '#333333',
-//     marginBottom: 5,
-//   },
-// });
