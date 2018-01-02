@@ -24,7 +24,7 @@ export default class App extends Component {
   }
 
   async componentDidMount(){
-    const isOnline = false;
+    const isOnline = true;
 
     if(isOnline) {
       const baseURL = 'https://api.github.com';
